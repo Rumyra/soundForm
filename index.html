@@ -24,21 +24,22 @@
 
 <form method="post" action="/">
   <fieldset><legend>Register</legend>
+    <p class="form-message form-error">There seem to be some errors in this form. Please check and try submitting again.</p>
     <div class="form-field">
       <label for="full-name">Full Name</label>
-      <input type="text" name="full-name" id="full-name" placeholder="Joe Bloggs" />
+      <input type="text" name="full-name" id="full-name" placeholder="Joe Bloggs" required />
     </div>
     <div class="form-field">
       <label for="email-input">Email input</label>
-      <input type="email" name="email-input" id="email-input" placeholder="example@domain.com" />
+      <input type="email" name="email-input" id="email-input" placeholder="example@domain.com" required />
     </div>
     <div class="form-field">
       <label for="password-input">Password</label>
-      <input type="password" name="password-input" id="password-input" />
+      <input type="password" name="password-input" id="password-input" required />
     </div>
     <div class="form-field">
-      <label for="reenter-password">Re-enter password</label>
-      <input type="password" name="reenter-password" id="reenter-password" />
+      <label for="reenter-password" required>Re-enter password</label>
+      <input type="password" name="reenter-password" id="reenter-password" required />
     </div>
     <input type="submit" value="Register" />
   </fieldset>
@@ -46,7 +47,65 @@
 
 </div>
 
+<script type="text/javascript" src=""></script>
 <script type="text/javascript">
+
+const formEl = document.querySelector('form');
+
+formEl.addEventListener("submit", function(ev) {
+  ev.preventDefault();
+  playError();
+
+  // Each time the user tries to send the data, we check if the email field is valid.
+  if (!email.validity.valid) {
+    // prevent form submission
+  }
+}, false);
+
+// good info and form validation examples here: https://developer.mozilla.org/en-US/docs/Learn/HTML/Forms/Form_validation
+
+const context = new window.AudioContext;
+
+
+
+function playSuccess() {
+  const errorNoise = context.createOscillator();
+  errorNoise.frequency = '600';
+  errorNoise.type = 'sine';
+  errorNoise.frequency.exponentialRampToValueAtTime(800, context.currentTime+0.05);
+  errorNoise.frequency.exponentialRampToValueAtTime(1000, context.currentTime+0.15);
+
+  errorGain = context.createGain();
+  errorGain.gain.exponentialRampToValueAtTime(0.01, context.currentTime+0.3);
+
+  successFilter = context.createBiquadFilter('bandpass');
+  successFilter.Q = 0.01;
+
+  errorNoise.connect(successFilter).connect(errorGain).connect(context.destination);
+  errorNoise.start();
+  errorNoise.stop(context.currentTime+0.2);
+}
+
+function playError() {
+  const errorNoise = context.createOscillator();
+  errorNoise.frequency = '400';
+  errorNoise.type = 'sine';
+  errorNoise.frequency.exponentialRampToValueAtTime(200, context.currentTime+0.05);
+  errorNoise.frequency.exponentialRampToValueAtTime(100, context.currentTime+0.2);
+
+  errorGain = context.createGain();
+  errorGain.gain.exponentialRampToValueAtTime(0.01, context.currentTime+0.3);
+
+  errorNoise.connect(errorGain).connect(context.destination);
+  errorNoise.start();
+  errorNoise.stop(context.currentTime+0.3);
+}
+
+
+
+
+
+
 
 </script>
 </body>

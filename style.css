@@ -13,6 +13,10 @@ body {background-color:#eee; font-family: 'helvetica neue', helvetica, arial, sa
 form {border:1px solid red;}
 fieldset {}
 legend {display:none;}
+
+.form-message {border: 2px solid #aaa; padding:1em; box-sizing: border-box;}
+.form-error {border-color: red;}
+
 .form-field {display: flex;}
 label, input {
   width:50%;

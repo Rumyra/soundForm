@@ -50,17 +50,7 @@
 <script type="text/javascript" src=""></script>
 <script type="text/javascript">
 
-const formEl = document.querySelector('form');
 
-formEl.addEventListener("submit", function(ev) {
-  ev.preventDefault();
-  playError();
-
-  // Each time the user tries to send the data, we check if the email field is valid.
-  if (!email.validity.valid) {
-    // prevent form submission
-  }
-}, false);
 
 // good info and form validation examples here: https://developer.mozilla.org/en-US/docs/Learn/HTML/Forms/Form_validation
 
@@ -100,6 +90,19 @@ function playError() {
   errorNoise.start();
   errorNoise.stop(context.currentTime+0.3);
 }
+
+const formEl = document.querySelector('form');
+
+formEl.addEventListener("submit", function(ev) {
+  ev.preventDefault();
+  console.log('submit');
+  playSuccess();
+
+  // Each time the user tries to send the data, we check if the email field is valid.
+  // if (!email.validity.valid) {
+    // prevent form submission
+  // }
+}, false);
 
 
 

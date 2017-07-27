@@ -91,7 +91,43 @@ function playError() {
   errorNoise.stop(context.currentTime+0.3);
 }
 
+
+(async() => {
+  try {
+    var response = await fetch('assets/Error3.m4a');
+    var data = await response.arrayBuffer();
+    console.log(data);
+  } catch (e) {
+    console.log("Booo")
+  }
+})();
+
 const formEl = document.querySelector('form');
+const formInputs = document.querySelectorAll('input');
+
+console.log(formInputs);
+
+// error == red border and play error sound
+function doError(el) {
+  el.style.border = '1px solid red';
+  playError();
+}
+
+function isEmpty(inputEl) {
+  inputEl.addEventListener('blur', function(ev) {
+    if (inputEl.value === '') {
+      doError();
+    }
+  });
+}
+
+// if move out of focus of any form elements and they are empty, error
+
+
+// if email isn't correct format, error
+
+// if passwords don't match, error
+
 
 formEl.addEventListener("submit", function(ev) {
   ev.preventDefault();

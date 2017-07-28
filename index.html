@@ -91,6 +91,14 @@ function playError() {
   errorNoise.stop(context.currentTime+0.3);
 }
 
+const sound = await fetch('sound.mp4');
+// Read it into memory as an arrayBuffer
+const arrayBuffer = sound.arrayBuffer();
+// Turn it from mp3/aac/whatever into raw audio data
+const audioBuffer = context.decodeAudioData(arrayBuffer);
+const arpsSource = context.createBufferSource();
+arpsSource.buffer = audioBuffer;
+arpsSource.connect(context.destination)arpsSource.start();
 
 (async() => {
   try {
@@ -101,6 +109,16 @@ function playError() {
     console.log("Booo")
   }
 })();
+
+async function getSoundFile(filename) {
+  try {
+    var response = await fetch(filename);
+    var data = await response.arrayBuffer();
+    return data;
+  } catch (e) {
+    return false;
+  }
+}
 
 const formEl = document.querySelector('form');
 const formInputs = document.querySelectorAll('input');

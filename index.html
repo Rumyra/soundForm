@@ -91,34 +91,76 @@ function playError() {
   errorNoise.stop(context.currentTime+0.3);
 }
 
-const sound = await fetch('sound.mp4');
-// Read it into memory as an arrayBuffer
-const arrayBuffer = sound.arrayBuffer();
-// Turn it from mp3/aac/whatever into raw audio data
-const audioBuffer = context.decodeAudioData(arrayBuffer);
-const arpsSource = context.createBufferSource();
-arpsSource.buffer = audioBuffer;
-arpsSource.connect(context.destination)arpsSource.start();
+// const errorFile = await fetch('assets/Error3.m4a');
+// const successFile = await fetch('assets/Success2.m4a');
 
-(async() => {
-  try {
-    var response = await fetch('assets/Error3.m4a');
-    var data = await response.arrayBuffer();
-    console.log(data);
-  } catch (e) {
-    console.log("Booo")
+// // buffer both into memory for use with audio buffers later
+// const errorFileBuffer = errorFile.arrayBuffer();
+// const successFileBuffer = successFile.arrayBuffer();
+
+// function playFile(arrayBuffer) {
+//   const audioBuffer = context.decodeAudioData(arrayBuffer);
+//   const soundSource = context.createBufferSource();
+//   soundSource.buffer = audioBuffer;
+//   soundSource.connect(context.destination)
+//   soundSource.start();
+// }
+
+
+class SoundFile {
+  constructor ({source, context}) {
+    if (!source) {
+      throw new Error('Source is required');
+    }
+    if (typeof source !== 'string') {
+      throw new Error('Source must be a file string');
+    }
+    if (!context) {
+      throw new Error('Context is required');
+    }
+    if (!(context instanceof AudioContext)) {
+      throw new Error('Context must be an AudioContext');
+    }
+    this.source = source;
+    this.context = context;
   }
-})();
 
-async function getSoundFile(filename) {
-  try {
-    var response = await fetch(filename);
-    var data = await response.arrayBuffer();
-    return data;
-  } catch (e) {
-    return false;
+  getSoundSource () {
+    if (this.soundSource) {
+      return new Promise.resolve(this.soundSource);
+    }
+    return fetch(this.source).then(data => {
+      const audioBuffer = this.context.decodeAudioData(data.arrayBuffer());
+      this.soundSource = this.context.createBufferSource();
+      this.soundSource.buffer = audioBuffer;
+      this.soundSource.connect(this.context.destination)
+      return this.soundSource;
+    });
+  }
+
+  play () {
+    return this.getSoundSource().then(soundSource => {
+      return soundSource.play();
+    });
   }
 }
+
+const errorFile = new SoundFile({
+  source: 'assets/Error3.m4a',
+  context
+});
+const successFile = new SoundFile({
+  source: 'assets/Success2.m4a',
+  context
+});
+
+errorFile.play()
+  .then(() => console.log('errorFile is playing'))
+  .catch((error) => console.error(error));
+successFile.play()
+  .then(() => console.log('successFile is playing'))
+  .catch((error) => console.error(error));
+
 
 const formEl = document.querySelector('form');
 const formInputs = document.querySelectorAll('input');
@@ -150,7 +192,7 @@ function isEmpty(inputEl) {
 formEl.addEventListener("submit", function(ev) {
   ev.preventDefault();
   console.log('submit');
-  playSuccess();
+  playFile(successFileBuffer);
 
   // Each time the user tries to send the data, we check if the email field is valid.
   // if (!email.validity.valid) {
